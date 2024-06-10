@@ -1,0 +1,22 @@
+
+apiVersion: enterprise.gloo.solo.io/v1
+kind: AuthConfig
+metadata:
+  name: oauth-oidc-atv-auth
+  namespace: default
+spec:
+  configs:
+    - name: keycloak_oidc_atv
+      oauth2:
+        accessTokenValidation:
+          jwt:
+            remoteJwks:
+              url: http://keycloak.keycloak.svc.cluster.local/realms/master/protocol/openid-connect/certs
+          dynamicMetadataFromClaims:
+            usagePlan: usagePlan
+    - name: opa
+      opaAuth:
+        modules:
+        - name: oauth-scope-apiproduct-opa-cm
+          namespace: default
+        query: "data.test.allow == true"
